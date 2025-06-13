@@ -1,0 +1,44 @@
+@"
+## Build results
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## VS Code settings (safe to keep if you don’t use it)
+.vscode/
+
+## Test Results
+TestResults/
+*.trx
+
+## Logs
+*.log
+
+## Auto-generated files
+*.generated.cs
+
+## Secrets
+*.env
+.env.*
+
+## Others
+_ReSharper*/
+*.db
+*.sqlite
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+## App settings (customize this as needed)
+appsettings.Development.json
+appsettings.Test.json
+appsettings.*.json
+"@ | Set-Content .gitignore
