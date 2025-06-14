@@ -9,4 +9,6 @@ public interface INoteRepository
 
     Task<int> CreateAsync(Note note, CancellationToken cancellationToken = default);
 
+    Task<Note> UpdateAsync(Note note, CancellationToken cancellationToken = default);
+
 }

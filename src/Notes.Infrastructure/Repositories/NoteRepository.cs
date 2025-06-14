@@ -30,4 +30,11 @@ public class NoteRepository : INoteRepository
         await _context.SaveChangesAsync(cancellationToken);
         return note.Id;
     }
+
+    public async Task<Note> UpdateAsync(Note note, CancellationToken cancellationToken = default)
+    {
+        _context.Notes.Update(note);
+        await _context.SaveChangesAsync(cancellationToken);
+        return note;
+    }
 }
