@@ -42,3 +42,6 @@ appsettings.Development.json
 appsettings.Test.json
 appsettings.*.json
 "@ | Set-Content .gitignore
+
+## Ignore Visual Studio user-specific files
+.vs/
