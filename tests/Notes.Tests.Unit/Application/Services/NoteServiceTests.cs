@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Notes.API.Requests;
+using Notes.Application.Models.Requests;
 using Notes.Application.Services;
 using Notes.Domain.Entities;
 using Notes.Domain.Interfaces;

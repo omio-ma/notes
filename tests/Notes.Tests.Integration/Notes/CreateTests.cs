@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Notes.API.Requests;
-using Notes.Domain.Entities;
+using Notes.Application.Models.Requests;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;

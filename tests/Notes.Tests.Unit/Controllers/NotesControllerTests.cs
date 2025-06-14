@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Notes.API.Controllers;
-using Notes.API.Requests;
 using Notes.Application.Interfaces;
+using Notes.Application.Models.Requests;
 using Notes.Domain.Entities;
 using System.Net;
 using System.Text;

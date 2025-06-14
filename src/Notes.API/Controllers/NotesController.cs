@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Notes.API.Requests;
 using Notes.Application.Interfaces;
+using Notes.Application.Models.Requests;
 
 namespace Notes.API.Controllers
 {
@@ -34,7 +34,6 @@ namespace Notes.API.Controllers
 
             return Ok(note);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] NoteRequest request)

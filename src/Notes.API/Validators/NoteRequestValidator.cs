@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Notes.API.Requests;
+using Notes.Application.Models.Requests;
 
 namespace Notes.API.Validators
 {

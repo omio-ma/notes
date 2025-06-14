@@ -1,4 +1,4 @@
-﻿using Notes.API.Requests;
+﻿using Notes.Application.Models.Requests;
 using Notes.Domain.Entities;
 
 namespace Notes.Application.Interfaces;

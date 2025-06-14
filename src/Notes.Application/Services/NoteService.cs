@@ -1,5 +1,5 @@
-﻿using Notes.API.Requests;
-using Notes.Application.Interfaces;
+﻿using Notes.Application.Interfaces;
+using Notes.Application.Models.Requests;
 using Notes.Domain.Entities;
 using Notes.Domain.Interfaces;
 
@@ -25,16 +25,8 @@ public class NoteService : INoteService
 
     public async Task<int> CreateAsync(NoteRequest request, CancellationToken cancellationToken = default)
     {
-        if (request == null) throw new ArgumentNullException(nameof(request));
-
-        var note = new Note
-        {
-            Title = request.Title,
-            Content = request.Content,
-            CreatedAt = DateTime.UtcNow
-        };
-
-        var noteId = await _repo.CreateAsync(note, cancellationToken);
+        var noteId = await _repo.CreateAsync(request.Map(), cancellationToken);
+        
         return noteId;
     }
 }
