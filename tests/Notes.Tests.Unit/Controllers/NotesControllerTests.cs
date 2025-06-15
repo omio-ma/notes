@@ -187,5 +187,51 @@ namespace Notes.Tests.Unit.Controllers
             var errorDetails = Assert.IsType<SerializableError>(badRequest.Value);
             Assert.True(errorDetails.ContainsKey("Title"));
         }
+
+        [Theory, AutoData]
+        public async Task Patch_ReturnsOk_WhenNoteIsUpdated(
+            int noteId,
+            NoteRequest patchRequest,
+            NoteResponse patchedResponse
+        )
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService
+                .Setup(s => s.PatchAsync(noteId, patchRequest, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(patchedResponse);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Patch(noteId, patchRequest);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedNote = Assert.IsType<NoteResponse>(okResult.Value);
+            Assert.Equal(patchedResponse.Title, returnedNote.Title);
+        }
+
+        [Theory, AutoData]
+        public async Task Patch_ReturnsNotFound_WhenNoteDoesNotExist(
+            int noteId,
+            NoteRequest patchRequest
+        )
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService
+                .Setup(s => s.PatchAsync(noteId, patchRequest, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((NoteResponse?)null);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Patch(noteId, patchRequest);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
+
     }
 }

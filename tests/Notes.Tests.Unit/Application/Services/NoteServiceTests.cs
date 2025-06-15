@@ -135,6 +135,64 @@ namespace Notes.Tests.Unit.Application.Services
             Assert.Null(result);
         }
 
+        [Theory, AutoData]
+        public async Task PatchAsync_ReturnsUpdatedNote_WhenSuccessful(NoteRequest request, int noteId)
+        {
+            // Arrange
+            var existingNote = new Note
+            {
+                Id = noteId,
+                Title = "Old Title",
+                Content = "Old Content",
+                CreatedAt = DateTime.UtcNow
+            };
 
+            var updatedNote = new Note
+            {
+                Id = noteId,
+                Title = request.Title,
+                Content = request.Content,
+                CreatedAt = existingNote.CreatedAt
+            };
+
+            var mockRepo = new Mock<INoteRepository>();
+
+            mockRepo.Setup(r => r.GetByIdAsync(noteId, false, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(existingNote);
+
+            mockRepo.Setup(r => r.UpdateAsync(It.Is<Note>(n =>
+                n.Id == noteId &&
+                n.Title == request.Title &&
+                n.Content == request.Content
+            ), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(updatedNote);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.PatchAsync(noteId, request);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(request.Title, result!.Title);
+            Assert.Equal(request.Content, result.Content);
+        }
+
+        [Theory, AutoData]
+        public async Task PatchAsync_ReturnsNull_WhenNoteNotFound(NoteRequest request, int noteId)
+        {
+            // Arrange
+            var mockRepo = new Mock<INoteRepository>();
+            mockRepo.Setup(r => r.GetByIdAsync(noteId, false, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync((Note?)null);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.PatchAsync(noteId, request);
+
+            // Assert
+            Assert.Null(result);
+        }
     }
 }

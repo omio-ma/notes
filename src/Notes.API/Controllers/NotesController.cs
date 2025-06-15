@@ -64,5 +64,23 @@ namespace Notes.API.Controllers
 
             return Ok(updatedNote);
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> Patch(int id, [FromBody] NoteRequest request, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedNote = await _noteService.PatchAsync(id, request, cancellationToken);
+
+            if (updatedNote == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedNote);
+        }
     }
 }

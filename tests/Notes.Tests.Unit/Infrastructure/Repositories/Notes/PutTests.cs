@@ -1,6 +1,4 @@
-﻿using Notes.Domain.Entities;
-
-namespace Notes.Tests.Unit.Infrastructure.Repositories.Notes
+﻿namespace Notes.Tests.Unit.Infrastructure.Repositories.Notes
 {
     public class PutTests : NoteRepositoryTestsBase
     {

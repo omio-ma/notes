@@ -7,6 +7,7 @@ using System.Text.Json;
 
 namespace Notes.Tests.Integration.Notes
 {
+    [Collection("Sequential Integration Tests")]
     public class PutTests : NotesTestBase
     {
         [Fact]

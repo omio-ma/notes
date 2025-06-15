@@ -29,7 +29,7 @@ public class NoteService : INoteService
     public async Task<int> CreateAsync(NoteRequest request, CancellationToken cancellationToken = default)
     {
         var noteId = await _repo.CreateAsync(request.Map(), cancellationToken);
-        
+
         return noteId;
     }
 
@@ -49,7 +49,23 @@ public class NoteService : INoteService
 
     public async Task<NoteResponse?> PatchAsync(int id, NoteRequest request, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existing = await _repo.GetByIdAsync(id, false, cancellationToken);
+        if (existing is null)
+        {
+            return null;
+        }
+        if (!string.IsNullOrWhiteSpace(request.Title))
+        {
+            existing.Title = request.Title;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Content))
+        {
+            existing.Content = request.Content;
+        }
+
+        var updated = await _repo.UpdateAsync(existing, cancellationToken);
+        return NoteMapper.ToResponse(updated);
     }
 
     public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
