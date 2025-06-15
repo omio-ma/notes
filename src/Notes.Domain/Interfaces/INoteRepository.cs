@@ -5,7 +5,7 @@ public interface INoteRepository
 {
     Task<IEnumerable<Note>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<Note?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Note?> GetByIdAsync(int id, bool track = true, CancellationToken cancellationToken = default);
 
     Task<int> CreateAsync(Note note, CancellationToken cancellationToken = default);
 

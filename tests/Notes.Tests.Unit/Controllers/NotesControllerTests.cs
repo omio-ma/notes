@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoFixture.Xunit2;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Notes.API.Controllers;
 using Notes.Application.Interfaces;
 using Notes.Application.Models.Requests;
-using Notes.Domain.Entities;
-using System.Net;
-using System.Text;
-using System.Text.Json;
+using Notes.Application.Models.Responses;
 
 namespace Notes.Tests.Unit.Controllers
 {
@@ -18,10 +16,10 @@ namespace Notes.Tests.Unit.Controllers
             // Arrange
             var mockService = new Mock<INoteService>();
             mockService.Setup(s => s.GetAllNotesAsync(default))
-                .ReturnsAsync(new List<Note>
+                .ReturnsAsync(new List<NoteResponse>
                 {
-                new Note { Title = "Note A", Content = "A", CreatedAt = DateTime.UtcNow },
-                new Note { Title = "Note B", Content = "B", CreatedAt = DateTime.UtcNow }
+            new NoteResponse { Id = 1, Title = "Note A", Content = "A", CreatedAt = DateTime.UtcNow },
+            new NoteResponse { Id = 2, Title = "Note B", Content = "B", CreatedAt = DateTime.UtcNow }
                 });
 
             var controller = new NotesController(mockService.Object);
@@ -31,24 +29,30 @@ namespace Notes.Tests.Unit.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var notes = Assert.IsAssignableFrom<IEnumerable<Note>>(okResult.Value);
+            var notes = Assert.IsAssignableFrom<IEnumerable<NoteResponse>>(okResult.Value);
             Assert.Equal(2, notes.Count());
         }
 
         [Fact]
         public async Task GetById_ReturnsOkResult_WhenNoteExists()
         {
-            var note = new Note { Id = 1, Title = "Note X", Content = "Test", CreatedAt = DateTime.UtcNow };
+            var noteResponse = new NoteResponse
+            {
+                Id = 1,
+                Title = "Note X",
+                Content = "Test",
+                CreatedAt = DateTime.UtcNow
+            };
 
             var mockService = new Mock<INoteService>();
-            mockService.Setup(s => s.GetNoteByIdAsync(1, default)).ReturnsAsync(note);
+            mockService.Setup(s => s.GetNoteByIdAsync(1, default)).ReturnsAsync(noteResponse);
 
             var controller = new NotesController(mockService.Object);
 
             var result = await controller.GetById(1);
 
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedNote = Assert.IsType<Note>(okResult.Value);
+            var returnedNote = Assert.IsType<NoteResponse>(okResult.Value);
             Assert.Equal(1, returnedNote.Id);
         }
 
@@ -56,7 +60,7 @@ namespace Notes.Tests.Unit.Controllers
         public async Task GetById_ReturnsNotFound_WhenNoteDoesNotExist()
         {
             var mockService = new Mock<INoteService>();
-            mockService.Setup(s => s.GetNoteByIdAsync(999, default)).ReturnsAsync((Note?)null);
+            mockService.Setup(s => s.GetNoteByIdAsync(999, default)).ReturnsAsync((NoteResponse?)null);
 
             var controller = new NotesController(mockService.Object);
 
@@ -105,6 +109,78 @@ namespace Notes.Tests.Unit.Controllers
 
             // Act
             var result = await controller.Post(invalidRequest);
+
+            // Assert
+            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+            var errorDetails = Assert.IsType<SerializableError>(badRequest.Value);
+            Assert.True(errorDetails.ContainsKey("Title"));
+        }
+
+        [Theory, AutoData]
+        public async Task UpdateNote_SuccessfullyUpdatesNote_AndReturnsNote(
+            int noteId,
+            NoteRequest validRequest,
+            NoteResponse expectedResponse
+        )
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService
+                .Setup(s => s.UpdateAsync(noteId, validRequest, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(expectedResponse);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Put(noteId, validRequest);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedNote = Assert.IsType<NoteResponse>(okResult.Value);
+            Assert.Equal(expectedResponse.Id, returnedNote.Id);
+            Assert.Equal(expectedResponse.Title, returnedNote.Title);
+            Assert.Equal(expectedResponse.Content, returnedNote.Content);
+        }
+
+        [Theory, AutoData]
+        public async Task UpdateNote_ReturnsNotFound(
+            int noteId,
+            NoteRequest request
+        )
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService
+                .Setup(s => s.UpdateAsync(noteId, request, It.IsAny<CancellationToken>()))
+                .ReturnsAsync((NoteResponse?)null);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Put(noteId, request);
+
+            // Assert
+            var okResult = Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Theory, AutoData]
+        public async Task UpdateNote_ReturnsBadRequest_WhenModelIsInvalid(
+            int noteId,
+            NoteRequest request
+        )
+        {
+            // Arrange
+            //request.Title = string.Empty;
+            var mockService = new Mock<INoteService>();
+            var controller = new NotesController(mockService.Object);
+
+            // Simulate model validation failure
+            controller.ModelState.AddModelError("Title", "The Title field is required.");
+
+            var invalidRequest = new NoteRequest();
+
+            // Act
+            var result = await controller.Put(noteId, request);
 
             // Assert
             var badRequest = Assert.IsType<BadRequestObjectResult>(result);

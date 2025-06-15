@@ -1,6 +1,7 @@
 ﻿using Notes.Application.Interfaces;
+using Notes.Application.Mappers;
 using Notes.Application.Models.Requests;
-using Notes.Domain.Entities;
+using Notes.Application.Models.Responses;
 using Notes.Domain.Interfaces;
 
 namespace Notes.Application.Services;
@@ -13,14 +14,16 @@ public class NoteService : INoteService
         _repo = repo;
     }
 
-    public Task<IEnumerable<Note>> GetAllNotesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<NoteResponse>> GetAllNotesAsync(CancellationToken cancellationToken = default)
     {
-        return _repo.GetAllAsync(cancellationToken);
+        var notes = await _repo.GetAllAsync(cancellationToken);
+        return notes.Select(NoteMapper.ToResponse);
     }
 
-    public Task<Note?> GetNoteByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<NoteResponse?> GetNoteByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return _repo.GetByIdAsync(id, cancellationToken);
+        var note = await _repo.GetByIdAsync(id, cancellationToken: cancellationToken);
+        return note == null ? null : NoteMapper.ToResponse(note);
     }
 
     public async Task<int> CreateAsync(NoteRequest request, CancellationToken cancellationToken = default)
@@ -28,5 +31,29 @@ public class NoteService : INoteService
         var noteId = await _repo.CreateAsync(request.Map(), cancellationToken);
         
         return noteId;
+    }
+
+    public async Task<NoteResponse?> UpdateAsync(int id, NoteRequest request, CancellationToken cancellationToken = default)
+    {
+        var existing = await _repo.GetByIdAsync(id, false, cancellationToken);
+        if (existing is null)
+        {
+            return null;
+        }
+
+        var note = request.Map();
+        note.Id = id;
+
+        return NoteMapper.ToResponse(await _repo.UpdateAsync(note, cancellationToken));
+    }
+
+    public async Task<NoteResponse?> PatchAsync(int id, NoteRequest request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 }

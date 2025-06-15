@@ -19,9 +19,16 @@ public class NoteRepository : INoteRepository
         return await _context.Notes.ToListAsync(cancellationToken);
     }
 
-    public async Task<Note?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Note?> GetByIdAsync(int id, bool track = true, CancellationToken cancellationToken = default)
     {
-        return await _context.Notes.FindAsync(new object[] { id }, cancellationToken);
+        var query = _context.Notes.AsQueryable();
+
+        if (!track)
+        {
+            query = query.AsNoTracking();
+        }
+
+        return await query.FirstOrDefaultAsync(n => n.Id == id, cancellationToken);
     }
 
     public async Task<int> CreateAsync(Note note, CancellationToken cancellationToken = default)

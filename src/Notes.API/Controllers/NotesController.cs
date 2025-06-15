@@ -46,5 +46,23 @@ namespace Notes.API.Controllers
             var newNoteId = await _noteService.CreateAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = newNoteId }, null);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(int id, [FromBody] NoteRequest request, CancellationToken cancellationToken = default)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var updatedNote = await _noteService.UpdateAsync(id, request, cancellationToken);
+
+            if (updatedNote == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedNote);
+        }
     }
 }

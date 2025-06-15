@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using AutoFixture.Xunit2;
+using Moq;
 using Notes.Application.Models.Requests;
 using Notes.Application.Services;
 using Notes.Domain.Entities;
@@ -36,7 +37,7 @@ namespace Notes.Tests.Unit.Application.Services
             var note = new Note { Id = 1, Title = "One", Content = "First", CreatedAt = DateTime.UtcNow };
 
             var mockRepo = new Mock<INoteRepository>();
-            mockRepo.Setup(r => r.GetByIdAsync(1, It.IsAny<CancellationToken>()))
+            mockRepo.Setup(r => r.GetByIdAsync(1, true, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(note);
 
             var service = new NoteService(mockRepo.Object);
@@ -72,5 +73,68 @@ namespace Notes.Tests.Unit.Application.Services
             // Assert
             Assert.Equal(42, resultId);
         }
+
+        [Theory, AutoData]
+        public async Task UpdateAsync_UpdatesNoteSuccessfully(
+            NoteRequest request,
+            int noteId
+        )
+        {
+            // Arrange
+            var expectedNote = new Note
+            {
+                Id = noteId,
+                Title = request.Title,
+                Content = request.Content
+            };
+
+            var mockRepo = new Mock<INoteRepository>();
+            mockRepo
+            .Setup(r => r.GetByIdAsync(noteId, false, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(expectedNote);
+
+            mockRepo.Setup(r =>
+                r.UpdateAsync(It.Is<Note>(n => n.Id == noteId), It.IsAny<CancellationToken>())
+            ).ReturnsAsync(expectedNote);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.UpdateAsync(noteId, request);
+
+            // Assert
+            Assert.Equal(expectedNote.Title, result!.Title);
+            Assert.Equal(expectedNote.Content, result.Content);
+        }
+
+        [Theory, AutoData]
+        public async Task UpdateAsync_ReturnsNull_WhenNotFound(
+            NoteRequest request,
+            int noteId
+        )
+        {
+            // Arrange
+            var expectedNote = new Note
+            {
+                Id = noteId,
+                Title = request.Title,
+                Content = request.Content
+            };
+
+            var mockRepo = new Mock<INoteRepository>();
+            mockRepo
+            .Setup(r => r.GetByIdAsync(noteId, true, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Note?)null);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.UpdateAsync(noteId, request);
+
+            // Assert
+            Assert.Null(result);
+        }
+
+
     }
 }
