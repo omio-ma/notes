@@ -68,8 +68,15 @@ public class NoteService : INoteService
         return NoteMapper.ToResponse(updated);
     }
 
-    public async Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existing = await _repo.GetByIdAsync(id, false, cancellationToken);
+        if (existing is null)
+        {
+            return false;
+        }
+
+        await _repo.DeleteAsync(existing, cancellationToken);
+        return true;
     }
 }

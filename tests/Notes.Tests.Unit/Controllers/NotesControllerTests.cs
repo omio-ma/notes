@@ -233,5 +233,36 @@ namespace Notes.Tests.Unit.Controllers
             Assert.IsType<NotFoundResult>(result);
         }
 
+        [Fact]
+        public async Task Delete_ReturnsNoContent_WhenNoteIsDeleted()
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService.Setup(s => s.DeleteAsync(1, default)).ReturnsAsync(true);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Delete(1);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task Delete_ReturnsNotFound_WhenNoteDoesNotExist()
+        {
+            // Arrange
+            var mockService = new Mock<INoteService>();
+            mockService.Setup(s => s.DeleteAsync(999, default)).ReturnsAsync(false);
+
+            var controller = new NotesController(mockService.Object);
+
+            // Act
+            var result = await controller.Delete(999);
+
+            // Assert
+            Assert.IsType<NotFoundResult>(result);
+        }
     }
 }

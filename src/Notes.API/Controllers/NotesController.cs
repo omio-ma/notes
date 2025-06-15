@@ -16,16 +16,16 @@ namespace Notes.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken = default)
         {
-            var notes = await _noteService.GetAllNotesAsync();
+            var notes = await _noteService.GetAllNotesAsync(cancellationToken);
             return Ok(notes);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
         {
-            var note = await _noteService.GetNoteByIdAsync(id);
+            var note = await _noteService.GetNoteByIdAsync(id, cancellationToken);
 
             if (note == null)
             {
@@ -36,14 +36,14 @@ namespace Notes.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] NoteRequest request)
+        public async Task<IActionResult> Post([FromBody] NoteRequest request, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var newNoteId = await _noteService.CreateAsync(request);
+            var newNoteId = await _noteService.CreateAsync(request, cancellationToken);
             return CreatedAtAction(nameof(GetById), new { id = newNoteId }, null);
         }
 
@@ -81,6 +81,17 @@ namespace Notes.API.Controllers
             }
 
             return Ok(updatedNote);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken = default)
+        {
+            var deleted = await _noteService.DeleteAsync(id, cancellationToken);    
+
+            if (!deleted)
+                return NotFound();
+
+            return NoContent();
         }
     }
 }

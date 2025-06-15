@@ -11,6 +11,6 @@ public interface INoteRepository
 
     Task<Note> UpdateAsync(Note note, CancellationToken cancellationToken = default);
 
-    Task DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(Note note, CancellationToken cancellationToken = default);
 
 }

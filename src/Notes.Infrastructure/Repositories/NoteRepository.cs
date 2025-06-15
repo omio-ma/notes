@@ -45,8 +45,9 @@ public class NoteRepository : INoteRepository
         return note;
     }
 
-    public Task DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Note note, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _context.Notes.Remove(note);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -194,5 +194,43 @@ namespace Notes.Tests.Unit.Application.Services
             // Assert
             Assert.Null(result);
         }
+
+        [Theory, AutoData]
+        public async Task DeleteAsync_ReturnsTrue_WhenNoteExists(Note note)
+        {
+            // Arrange
+            var mockRepo = new Mock<INoteRepository>();
+            mockRepo.Setup(r => r.GetByIdAsync(note.Id, false, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(note);
+            mockRepo.Setup(r => r.DeleteAsync(note, It.IsAny<CancellationToken>()))
+                    .Returns(Task.CompletedTask);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.DeleteAsync(note.Id);
+
+            // Assert
+            Assert.True(result);
+            mockRepo.Verify(r => r.DeleteAsync(note, It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Theory, AutoData]
+        public async Task DeleteAsync_ReturnsFalse_WhenNoteDoesNotExist(int noteId)
+        {
+            // Arrange
+            var mockRepo = new Mock<INoteRepository>();
+            mockRepo.Setup(r => r.GetByIdAsync(noteId, false, It.IsAny<CancellationToken>()))
+                    .ReturnsAsync((Note?)null);
+
+            var service = new NoteService(mockRepo.Object);
+
+            // Act
+            var result = await service.DeleteAsync(noteId);
+
+            // Assert
+            Assert.False(result);
+            mockRepo.Verify(r => r.DeleteAsync(It.IsAny<Note>(), It.IsAny<CancellationToken>()), Times.Never);
+        }
     }
 }
