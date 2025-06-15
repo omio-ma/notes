@@ -27,7 +27,8 @@ namespace Notes.API
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services
-                .AddValidatorsFromAssemblyContaining<NoteRequestValidator>();
+                .AddValidatorsFromAssemblyContaining<NoteRequestValidator>()
+                .AddValidatorsFromAssemblyContaining<PatchNoteRequestValidator>();
 
             builder.Services
                 .AddFluentValidationAutoValidation()

@@ -191,7 +191,7 @@ namespace Notes.Tests.Unit.Controllers
         [Theory, AutoData]
         public async Task Patch_ReturnsOk_WhenNoteIsUpdated(
             int noteId,
-            NoteRequest patchRequest,
+            PatchNoteRequest patchRequest,
             NoteResponse patchedResponse
         )
         {
@@ -215,7 +215,7 @@ namespace Notes.Tests.Unit.Controllers
         [Theory, AutoData]
         public async Task Patch_ReturnsNotFound_WhenNoteDoesNotExist(
             int noteId,
-            NoteRequest patchRequest
+            PatchNoteRequest patchRequest
         )
         {
             // Arrange

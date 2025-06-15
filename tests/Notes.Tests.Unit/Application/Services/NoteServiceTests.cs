@@ -136,7 +136,7 @@ namespace Notes.Tests.Unit.Application.Services
         }
 
         [Theory, AutoData]
-        public async Task PatchAsync_ReturnsUpdatedNote_WhenSuccessful(NoteRequest request, int noteId)
+        public async Task PatchAsync_ReturnsUpdatedNote_WhenSuccessful(PatchNoteRequest request, int noteId)
         {
             // Arrange
             var existingNote = new Note
@@ -179,7 +179,7 @@ namespace Notes.Tests.Unit.Application.Services
         }
 
         [Theory, AutoData]
-        public async Task PatchAsync_ReturnsNull_WhenNoteNotFound(NoteRequest request, int noteId)
+        public async Task PatchAsync_ReturnsNull_WhenNoteNotFound(PatchNoteRequest request, int noteId)
         {
             // Arrange
             var mockRepo = new Mock<INoteRepository>();

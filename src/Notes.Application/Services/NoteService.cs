@@ -47,7 +47,7 @@ public class NoteService : INoteService
         return NoteMapper.ToResponse(await _repo.UpdateAsync(note, cancellationToken));
     }
 
-    public async Task<NoteResponse?> PatchAsync(int id, NoteRequest request, CancellationToken cancellationToken = default)
+    public async Task<NoteResponse?> PatchAsync(int id, PatchNoteRequest request, CancellationToken cancellationToken = default)
     {
         var existing = await _repo.GetByIdAsync(id, false, cancellationToken);
         if (existing is null)

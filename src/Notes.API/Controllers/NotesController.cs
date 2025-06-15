@@ -66,7 +66,7 @@ namespace Notes.API.Controllers
         }
 
         [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] NoteRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Patch(int id, [FromBody] PatchNoteRequest request, CancellationToken cancellationToken = default)
         {
             if (!ModelState.IsValid)
             {

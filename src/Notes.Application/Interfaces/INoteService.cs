@@ -8,7 +8,7 @@ public interface INoteService
     Task<NoteResponse?> GetNoteByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<int> CreateAsync(NoteRequest request, CancellationToken cancellationToken = default);
     Task<NoteResponse?> UpdateAsync(int id, NoteRequest request, CancellationToken cancellationToken = default);
-    Task<NoteResponse?> PatchAsync(int id, NoteRequest request, CancellationToken cancellationToken = default);
+    Task<NoteResponse?> PatchAsync(int id, PatchNoteRequest request, CancellationToken cancellationToken = default);
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 
 }
