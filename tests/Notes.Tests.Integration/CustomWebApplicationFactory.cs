@@ -10,7 +10,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<API.Program>
     {
         builder.ConfigureAppConfiguration((context, config) =>
         {
-            var path = Path.Combine(AppContext.BaseDirectory, "appsettings.test.json");
+            var path = Path.Combine(AppContext.BaseDirectory, "appsettings.Test.json");
             config.AddJsonFile(path, optional: false);
         });
     }
