@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <None Include="appsettings.Test.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

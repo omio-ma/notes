@@ -12,6 +12,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<API.Program>
         {
             var path = Path.Combine(AppContext.BaseDirectory, "appsettings.Test.json");
             config.AddJsonFile(path, optional: true);
+            config.AddEnvironmentVariables();
         });
     }
 }
