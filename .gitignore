@@ -39,8 +39,8 @@ Thumbs.db
 
 ## App settings (customize this as needed)
 appsettings.Development.json
-appsettings.Test.json
 appsettings.*.json
+!IntegrationTests/appsettings.test.json
 "@ | Set-Content .gitignore
 
 ## Ignore Visual Studio user-specific files
