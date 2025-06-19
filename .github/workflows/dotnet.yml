@@ -37,4 +37,4 @@ jobs:
 
       - run: dotnet test --no-build
         env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=Your_password123;"
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True;"
