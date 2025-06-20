@@ -4,8 +4,11 @@ on:
   push:
     branches:
       - main
-      - feature/**
       - codex/**
+      - feature/**
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build_and_test:
