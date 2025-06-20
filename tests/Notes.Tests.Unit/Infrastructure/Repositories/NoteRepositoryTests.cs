@@ -24,7 +24,7 @@ public class NoteRepositoryTests
 
         // Assert
         Assert.NotNull(notes);
-        Assert.Equal(2, notes.Count());
+        Assert.Equal(3, notes.Count());
     }
 
     [Fact]
