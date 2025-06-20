@@ -2,12 +2,15 @@ name: Build & Test (.NET)
 
 on:
   push:
-    branches: ["**"]
+    branches:
+      - main
   pull_request:
-    branches: ["**"]
+    branches:
+      - codex/**
+      - feature/**
 
 jobs:
-  test:
+  build_and_test:
     runs-on: ubuntu-latest
 
     services:
