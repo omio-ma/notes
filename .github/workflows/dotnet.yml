@@ -1,0 +1,41 @@
+name: Build & Test (.NET)
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+      - codex/**
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          SA_PASSWORD: ${{ secrets.SQL_SA_PASSWORD }}
+          ACCEPT_EULA: "Y"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "exit 0"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 9.0.x
+
+      - run: dotnet restore
+
+      - run: dotnet build --no-restore
+
+      - run: dotnet test --no-build
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=${{ secrets.SQL_SA_PASSWORD }};TrustServerCertificate=True;"

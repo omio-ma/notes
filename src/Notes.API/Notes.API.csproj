@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="appsettings.Test.json" />
+    <Content Remove="appsettings.test.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="appsettings.Test.json" />
+    <None Include="appsettings.Test.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

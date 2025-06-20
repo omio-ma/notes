@@ -1,12 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Notes.Domain.Entities;
 using Notes.Infrastructure.Persistence;
-using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Notes.Tests.Integration.Notes
 {
@@ -21,8 +17,18 @@ namespace Notes.Tests.Integration.Notes
         {
             Client = new CustomWebApplicationFactory().CreateClient();
 
+            // Load config from appsettings.Test.json and/or environment variables
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.Test.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
             var options = new DbContextOptionsBuilder<NotesDbContext>()
-                .UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=NotesDb_Test;Trusted_Connection=True;TrustServerCertificate=True;")
+                .UseSqlServer(connectionString)
                 .Options;
 
             Context = new NotesDbContext(options);
@@ -49,7 +55,6 @@ namespace Notes.Tests.Integration.Notes
             // Clean up after test
             Context.Notes.RemoveRange(Context.Notes);
             await Context.SaveChangesAsync();
-            //await Context.Database.EnsureDeletedAsync();
             await Context.DisposeAsync();
         }
     }
