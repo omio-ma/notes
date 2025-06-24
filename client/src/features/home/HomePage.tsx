@@ -1,9 +1,8 @@
 import { CircularProgress } from "@mui/material";
-import "./App.css";
-import type { Note } from "./lib/types";
-import { useNotes } from "./lib/hooks/notes/useNotes";
+import { useNotes } from "../../lib/hooks/notes/useNotes";
+import NotesList from "../notes/NotesList";
 
-function App() {
+function HomePage() {
   const { data: notes, isLoading, error } = useNotes();
 
   return (
@@ -15,22 +14,11 @@ function App() {
         ) : error ? (
           <p className="text-red-600">Failed to load notes.</p>
         ) : (
-          <ul className="space-y-4">
-            {notes?.map((note: Note) => (
-              <li
-                key={note.id}
-                className="p-4 rounded-md border border-orange-200 bg-orange-50"
-              >
-                <p className="text-lg font-medium text-orange-800">
-                  {note.title}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <NotesList notes={notes} />
         )}
       </div>
     </div>
   );
 }
 
-export default App;
+export default HomePage;
