@@ -1,8 +1,10 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
-import * as useNotesModule from "../../lib/hooks/notes/useNotes";
 import type { Note } from "../../lib/types";
 import HomePage from "./HomePage";
+
+import * as useNotesModule from "../../lib/hooks/notes/useNotes";
+import * as updateHook from "../../lib/hooks/notes/useUpdateNote";
 
 // Mocking MUI CircularProgress to avoid unnecessary rendering
 jest.mock("@mui/material", () => ({
@@ -12,6 +14,10 @@ jest.mock("@mui/material", () => ({
 
 jest.mock("../../lib/hooks/notes/useNotes");
 jest.mock("../../lib/agent");
+jest.mock("../../lib/hooks/notes/useUpdateNote");
+
+const mockMutate = jest.fn();
+(updateHook.useUpdateNote as jest.Mock).mockReturnValue({ mutate: mockMutate });
 
 describe("HomePage", () => {
   const useNotesMock = useNotesModule as jest.Mocked<typeof useNotesModule>;
