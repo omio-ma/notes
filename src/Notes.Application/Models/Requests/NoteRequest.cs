@@ -13,7 +13,6 @@ namespace Notes.Application.Models.Requests
            {
                Title = Title,
                Content = Content,
-               CreatedAt = DateTime.UtcNow
            };
         }
     }
