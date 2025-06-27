@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": false,
+    "types": ["jest", "node", "vite/client"],
+    "noEmit": true
+  },
+  "include": ["src", "jest.config.ts", "jest.setup.ts", "__mocks__"]
+}

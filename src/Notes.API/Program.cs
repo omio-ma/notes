@@ -1,12 +1,12 @@
-using Notes.Infrastructure.Persistence;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using Notes.Application.Interfaces;
 using Notes.Application.Services;
-using Notes.Domain.Interfaces;
-using Notes.Infrastructure.Repositories;
-using FluentValidation.AspNetCore;
 using Notes.API.Validators;
-using FluentValidation;
+using Notes.Domain.Interfaces;
+using Notes.Infrastructure.Persistence;
+using Notes.Infrastructure.Repositories;
 
 namespace Notes.API
 {
@@ -19,6 +19,18 @@ namespace Notes.API
             // Add services to the container
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
+
+            // Add CORS
+            var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins(allowedOrigins ?? [])
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
 
             builder.Services.AddScoped<INoteRepository, NoteRepository>();
             builder.Services.AddScoped<INoteService, NoteService>();
@@ -37,6 +49,7 @@ namespace Notes.API
 
             var app = builder.Build();
 
+            app.UseCors("AllowFrontend");
             app.UseAuthorization();
             app.MapControllers();
 
