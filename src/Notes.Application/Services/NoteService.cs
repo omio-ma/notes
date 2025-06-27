@@ -43,6 +43,7 @@ public class NoteService : INoteService
 
         var note = request.Map();
         note.Id = id;
+        note.CreatedAt = existing.CreatedAt;
 
         return NoteMapper.ToResponse(await _repo.UpdateAsync(note, cancellationToken));
     }
