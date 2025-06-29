@@ -1,27 +1,27 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
+import * as useNotesModule from "../../lib/hooks/notes/useNotes";
 import type { Note } from "../../lib/types";
 import HomePage from "./HomePage";
 
-import * as useNotesModule from "../../lib/hooks/notes/useNotes";
-import * as updateHook from "../../lib/hooks/notes/useUpdateNote";
-
-// Mocking MUI CircularProgress to avoid unnecessary rendering
+// Mock MUI CircularProgress
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
   CircularProgress: () => <div data-testid="loader">Loading...</div>
 }));
 
-jest.mock("../../lib/hooks/notes/useNotes");
-jest.mock("../../lib/agent");
-jest.mock("../../lib/hooks/notes/useUpdateNote");
+// Mock NotesList with just a test ID
+jest.mock("../notes/NotesList", () => () => (
+  <div data-testid="mock-notes-list">NotesList</div>
+));
 
-const mockMutate = jest.fn();
-(updateHook.useUpdateNote as jest.Mock).mockReturnValue({ mutate: mockMutate });
+// Mock useNotes
+jest.mock("../../lib/hooks/notes/useNotes");
+const useNotesMock = useNotesModule as jest.Mocked<typeof useNotesModule>;
+
+jest.mock("../../lib/agent");
 
 describe("HomePage", () => {
-  const useNotesMock = useNotesModule as jest.Mocked<typeof useNotesModule>;
-
   it("shows loading state", () => {
     useNotesMock.useNotes.mockReturnValue({
       data: undefined,
@@ -44,18 +44,12 @@ describe("HomePage", () => {
     expect(screen.getByText(/Failed to load notes/i)).toBeDefined();
   });
 
-  it("renders list of notes on success", () => {
+  it("renders NotesList on success", () => {
     const mockNotes: Note[] = [
       {
         id: 1,
         title: "Note A",
         content: "A content",
-        createdAt: new Date().toISOString()
-      },
-      {
-        id: 2,
-        title: "Note B",
-        content: "B content",
         createdAt: new Date().toISOString()
       }
     ];
@@ -67,8 +61,6 @@ describe("HomePage", () => {
     } as unknown as UseQueryResult<Note[]>);
 
     render(<HomePage />);
-    expect(screen.getByText("My Notes")).toBeDefined();
-    expect(screen.getByTestId("note-item-1")).toBeDefined();
-    expect(screen.getByTestId("note-item-2")).toBeDefined();
+    expect(screen.getByTestId("mock-notes-list")).toBeDefined();
   });
 });
