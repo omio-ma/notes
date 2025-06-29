@@ -1,41 +1,15 @@
-import { Fab } from "@mui/material";
-import { useUpdateNote } from "../../lib/hooks/notes/useUpdateNote";
-import type { Note } from "../../lib/types";
-import NoteForm from "./NoteForm";
 import NoteItem from "./NoteItem";
+import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import type { Note } from "../../lib/types";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   notes: Note[] | undefined;
-  selectedNote: Note | null;
-  setSelectedNote: (note: Note | null) => void;
 };
 
-function NotesList({ notes, selectedNote, setSelectedNote }: Props) {
-  const { mutate } = useUpdateNote();
-
-  if (selectedNote) {
-    return (
-      <NoteForm
-        note={selectedNote}
-        onBack={() => setSelectedNote(null)}
-        onSave={(updatedNote) => {
-          mutate(
-            {
-              id: updatedNote.id,
-              data: {
-                title: updatedNote.title,
-                content: updatedNote.content
-              }
-            },
-            {
-              onSuccess: () => setSelectedNote(null)
-            }
-          );
-        }}
-      />
-    );
-  }
+function NotesList({ notes }: Props) {
+  const navigate = useNavigate();
 
   return (
     <>
@@ -43,14 +17,7 @@ function NotesList({ notes, selectedNote, setSelectedNote }: Props) {
         <Fab
           color="primary"
           aria-label="add"
-          onClick={() =>
-            setSelectedNote({
-              id: 0,
-              title: "",
-              content: "",
-              createdAt: new Date().toISOString()
-            })
-          }
+          onClick={() => navigate("/create")}
         >
           <AddIcon />
         </Fab>
@@ -66,7 +33,7 @@ function NotesList({ notes, selectedNote, setSelectedNote }: Props) {
             <NoteItem
               key={note.id}
               note={note}
-              onClick={() => setSelectedNote(note)}
+              onClick={() => navigate(`/${note.id}/edit`)}
             />
           ))}
       </ul>
