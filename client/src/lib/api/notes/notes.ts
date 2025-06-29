@@ -6,6 +6,10 @@ export async function getAllNotes(): Promise<Note[]> {
   return response.data;
 }
 
+export async function createNote(note: Omit<Note, "id" | "createdAt">) {
+  return await agent.post<Note>("/notes", note);
+}
+
 export async function updateNote(
   id: number,
   note: Omit<Note, "id" | "createdAt">

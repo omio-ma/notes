@@ -25,6 +25,7 @@ function NoteForm({ note, onBack, onSave }: Props) {
         onChange={(e) => setTitle(e.target.value)}
         className="w-full p-2 border border-gray-300 rounded"
         placeholder="Title"
+        data-testid="note-form-title"
       />
       <textarea
         value={content}
@@ -32,17 +33,19 @@ function NoteForm({ note, onBack, onSave }: Props) {
         className="w-full p-2 border border-gray-300 rounded"
         rows={5}
         placeholder="Content"
+        data-testid="note-form-content"
       />
       <div className="flex justify-between">
         <button
           type="button"
           onClick={onBack}
           className="px-4 py-2 bg-gray-300 text-gray-800 rounded cursor-pointer"
+          data-testid="note-form-back-button"
         >
           Back
         </button>
         <button
-          data-testid="note-save-button"
+          data-testid="note-form-save-button"
           type="submit"
           className="px-4 py-2 bg-green-600 text-white rounded cursor-pointer"
         >

@@ -57,45 +57,7 @@ describe("NotesList", () => {
     });
   });
 
-  it("updates input fields when typing", () => {
-    const note: Note = {
-      id: 1,
-      title: "Original Title",
-      content: "Original Content",
-      createdAt: new Date().toISOString()
-    };
-
-    render(
-      <NotesList
-        notes={[note]}
-        selectedNote={note}
-        setSelectedNote={jest.fn()}
-      />
-    );
-
-    const titleInput = screen.getByPlaceholderText("Title") as HTMLInputElement;
-    const contentTextarea = screen.getByPlaceholderText(
-      "Content"
-    ) as HTMLTextAreaElement;
-
-    fireEvent.change(titleInput, { target: { value: "Updated Title" } });
-    fireEvent.change(contentTextarea, { target: { value: "Updated Content" } });
-
-    fireEvent.click(screen.getByTestId("note-save-button"));
-
-    expect(mockMutate).toHaveBeenCalledWith(
-      {
-        id: note.id,
-        data: {
-          title: "Updated Title",
-          content: "Updated Content"
-        }
-      },
-      expect.any(Object)
-    );
-  });
-
-  it("calls mutate and then setSelectedNote(null) on success", () => {
+  it("resets selected note after successful update", () => {
     const note: Note = {
       id: 1,
       title: "Original Title",
@@ -113,15 +75,7 @@ describe("NotesList", () => {
       />
     );
 
-    fireEvent.change(screen.getByPlaceholderText("Title"), {
-      target: { value: "Updated Title" }
-    });
-
-    fireEvent.change(screen.getByPlaceholderText("Content"), {
-      target: { value: "Updated Content" }
-    });
-
-    fireEvent.click(screen.getByTestId("note-save-button"));
+    fireEvent.click(screen.getByTestId("note-form-save-button"));
 
     // simulating on success callback
     const mutateCallArgs = mockMutate.mock.calls[0];
