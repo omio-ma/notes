@@ -4,18 +4,15 @@ import * as useNotesModule from "../../lib/hooks/notes/useNotes";
 import type { Note } from "../../lib/types";
 import HomePage from "./HomePage";
 
-// Mock MUI CircularProgress
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
   CircularProgress: () => <div data-testid="loader">Loading...</div>
 }));
 
-// Mock NotesList with just a test ID
 jest.mock("../notes/NotesList", () => () => (
   <div data-testid="mock-notes-list">NotesList</div>
 ));
 
-// Mock useNotes
 jest.mock("../../lib/hooks/notes/useNotes");
 const useNotesMock = useNotesModule as jest.Mocked<typeof useNotesModule>;
 
