@@ -11,6 +11,10 @@ on:
       - "**/*.cs"
       - "**/*.csproj"
       - "**/*.sln"
+  workflow_call:
+    secrets:
+      SQL_SA_PASSWORD:
+        required: true
 
 jobs:
   build_and_test:
