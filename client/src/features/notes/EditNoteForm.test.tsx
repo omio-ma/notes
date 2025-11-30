@@ -4,6 +4,14 @@ import type { Note } from "../../lib/types";
 import * as notesHook from "../../lib/hooks/notes/useNotes";
 import * as updateHook from "../../lib/hooks/notes/useUpdateNote";
 
+jest.mock("@auth0/auth0-react", () => ({
+  useAuth0: () => ({
+    isAuthenticated: true,
+    user: { sub: "test-user" },
+    getAccessTokenSilently: jest.fn()
+  })
+}));
+
 jest.mock("../../lib/hooks/notes/useNotes");
 jest.mock("../../lib/hooks/notes/useUpdateNote");
 jest.mock("../../lib/agent");

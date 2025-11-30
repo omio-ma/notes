@@ -5,6 +5,14 @@ import * as createHook from "../../lib/hooks/notes/useCreateNote";
 const mockNavigate = jest.fn();
 const mockMutate = jest.fn((_, { onSuccess }) => onSuccess?.());
 
+jest.mock("@auth0/auth0-react", () => ({
+  useAuth0: () => ({
+    isAuthenticated: true,
+    user: { sub: "test-user" },
+    getAccessTokenSilently: jest.fn()
+  })
+}));
+
 jest.mock("react-router", () => ({
   useNavigate: () => mockNavigate
 }));
