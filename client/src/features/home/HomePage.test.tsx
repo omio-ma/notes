@@ -4,6 +4,14 @@ import * as useNotesModule from "../../lib/hooks/notes/useNotes";
 import type { Note } from "../../lib/types";
 import HomePage from "./HomePage";
 
+jest.mock("@auth0/auth0-react", () => ({
+  useAuth0: () => ({
+    isAuthenticated: true,
+    user: { sub: "test-user" },
+    getAccessTokenSilently: jest.fn()
+  })
+}));
+
 jest.mock("@mui/material", () => ({
   ...jest.requireActual("@mui/material"),
   CircularProgress: () => <div data-testid="loader">Loading...</div>
